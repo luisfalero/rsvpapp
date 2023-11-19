@@ -29,29 +29,28 @@ spec:
         }
     }
   environment {
-      IMAGE_REPO = "joedayz/rsvpapp"
-      // Instead of DOCKERHUB_USER, use your Dockerhub name
+      IMAGE_REPO = "quay.io/rh_ee_lfalero/rsvp" // CAMBIAR
   }
   stages {
     stage('Build') {
       environment {
-        DOCKERHUB_CREDS = credentials('dockerhub')
+        DOCKERHUB_CREDS = credentials('quayio')
       }
       steps {
         container('docker') {
           sh "echo ${env.GIT_COMMIT}"
           // Build new image
-          sh "until docker container ls; do sleep 3; done && docker image build -t  ${env.IMAGE_REPO}:${env.GIT_COMMIT} ."
+          sh "until docker container ls; do sleep 3; done && docker image build -t ${env.IMAGE_REPO}:${env.GIT_COMMIT} ."
           // Publish new image
-          sh "docker login --username $DOCKERHUB_CREDS_USR --password $DOCKERHUB_CREDS_PSW && docker image push ${env.IMAGE_REPO}:${env.GIT_COMMIT}"
+          sh "docker login --username $DOCKERHUB_CREDS_USR --password $DOCKERHUB_CREDS_PSW quay.io && docker image push ${env.IMAGE_REPO}:${env.GIT_COMMIT}"
         }
       }
     }
     stage('Deploy') {
       environment {
         GIT_CREDS = credentials('github')
-        HELM_GIT_REPO_URL = "github.com/joedayz/rsvpapp-helm-cicd.git"
-        GIT_REPO_EMAIL = 'jose.diaz@joedayz.pe'
+        HELM_GIT_REPO_URL = "github.com/luisfalero/rsvpapp-helm-cicd.git" // CAMBIAR
+        GIT_REPO_EMAIL = 'lfalero@redhat.com' // CAMBIAR
         GIT_REPO_BRANCH = "master"
           
        // Update above variables with your user details
